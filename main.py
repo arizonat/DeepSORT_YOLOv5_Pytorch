@@ -1,7 +1,7 @@
 from yolov5.utils.general import (
     check_img_size, non_max_suppression, scale_coords, xyxy2xywh)
-from yolov5.utils.torch_utils import select_device, time_synchronized
-from yolov5.utils.datasets import letterbox
+from yolov5.utils.torch_utils import select_device, time_sync
+from yolov5.utils.augmentations import letterbox
 
 from utils_ds.parser import get_config
 from utils_ds.draw import draw_boxes
@@ -156,7 +156,8 @@ class VideoTracker(object):
             if self.args.save_txt:
                 with open(self.args.save_txt + str(idx_frame).zfill(4) + '.txt', 'a') as f:
                     for i in range(len(outputs)):
-                        x1, y1, x2, y2, idx = outputs[i]
+                        print(outputs)
+                        x1, y1, x2, y2, idx, conf = outputs[i]
                         f.write('{}\t{}\t{}\t{}\t{}\n'.format(x1, y1, x2, y2, idx))
 
 
@@ -190,14 +191,14 @@ class VideoTracker(object):
 
         # Detection time *********************************************************
         # Inference
-        t1 = time_synchronized()
+        t1 = time_sync()
         with torch.no_grad():
             pred = self.detector(img, augment=self.args.augment)[0]  # list: bz * [ (#obj, 6)]
 
         # Apply NMS and filter object other than person (cls:0)
         pred = non_max_suppression(pred, self.args.conf_thres, self.args.iou_thres,
                                    classes=self.args.classes, agnostic=self.args.agnostic_nms)
-        t2 = time_synchronized()
+        t2 = time_sync()
 
         # get all obj ************************************************************
         det = pred[0]  # for video, bz is 1
