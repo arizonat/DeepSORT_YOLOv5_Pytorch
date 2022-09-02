@@ -44,6 +44,7 @@ class ImageLoader(object):
     def open(self, path):
         img_paths = glob.glob(join(path, "*"+self.filetype))
         self.all_img_paths = img_paths
+        self.all_img_paths.sort()
         self.curr_idx = -1
         self.is_initialized = True
         self.input_path = path
