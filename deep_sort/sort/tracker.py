@@ -78,7 +78,6 @@ class Tracker:
         for track_idx in unmatched_tracks:
             self.tracks[track_idx].mark_missed()
         for detection_idx in unmatched_detections:
-            #
             self._initiate_track(detections[detection_idx])
         self.tracks = [t for t in self.tracks if not t.is_deleted()]
 
@@ -159,5 +158,5 @@ class Tracker:
 
         self.tracks.append(Track(
             mean, covariance, self._next_id, self.n_init, self.max_age,
-            detection.feature)) # for new obj, create a new Track object for it
+            detection.feature, detection)) # for new obj, create a new Track object for it
         self._next_id += 1
